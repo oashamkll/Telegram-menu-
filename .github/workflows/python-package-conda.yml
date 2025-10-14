@@ -1,33 +1,49 @@
-name: Manual run Python script
+# Имя рабочего процесса, которое будет отображаться на вкладке Actions
+name: Run Python Script Manually
 
 on:
-  # Этот триггер добавляет кнопку "Run workflow" на вкладке Actions.
+  # Этот триггер добавляет кнопку «Run workflow» на странице Actions
   workflow_dispatch:
     inputs:
+      # Поле для ввода ветки, на которой должен быть запущен скрипт
       branch:
         description: 'Branch to run the script on'
         required: true
         default: 'main'
+      # Необязательное поле для ввода имени скрипта
+      script_name:
+        description: 'Name of the Python script to run (e.g., my_script.py)'
+        required: true
+        default: 'my_script.py'
 
 jobs:
-  run-script:
+  run-python-script:
+    # Определение операционной системы для раннера
     runs-on: ubuntu-latest
     
     steps:
-      # Загрузка кода из репозитория.
+      # Шаг 1: Загрузка кода из репозитория
       - name: Checkout repository code
         uses: actions/checkout@v4
         with:
+          # Использование введенной ветки для загрузки кода
           ref: ${{ github.event.inputs.branch }}
           
-      # Настройка окружения Python.
+      # Шаг 2: Настройка окружения Python
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.x'
           
-      # Выполнение Python-скрипта.
+      # Шаг 3: Установка зависимостей (если они есть)
+      # Если у вас есть requirements.txt, раскомментируйте следующие строки
+      # - name: Install dependencies
+      #   run: |
+      #     python -m pip install --upgrade pip
+      #     pip install -r requirements.txt
+          
+      # Шаг 4: Запуск Python-скрипта
       - name: Run Python script
         run: |
-          # Укажите путь к вашему скрипту, например, 'my_script.py'
-          python my_script.py
+          # Запуск скрипта, имя которого было введено вручную
+          python ${{ github.event.inputs.script_name }}
